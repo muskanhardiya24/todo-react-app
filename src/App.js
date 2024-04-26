@@ -4,21 +4,22 @@ import { useState } from 'react';
 var count = 0
 function App() 
 {
+  const [editingFlag, setEditingFlag] = useState(-1)
   const [todoList, setTodoList] = useState([
     {
     id: count++,
     todo: "Need to complete homework",
-    completed: true
+    completed: false
     },
     {
       id: count++,
       todo: "buy groceries",
-      completed: true
+      completed: false
       },
       {
         id: count++,
         todo: "have to fix",
-        completed: false
+        completed:false
         },
         {
           id: count++,
@@ -82,6 +83,37 @@ const completedTodo =(id) =>
 }
 
 
+const editTodo = (id) =>
+{
+  console.log("editTodo: ", id);
+  setEditingFlag(id)
+}
+
+  const saveEditedTodo = () =>
+{
+  console.log("saveEditedTodo: ");
+  const updatedTodoText = document.getElementById("editingTodo").value
+  console.log("updateTodoText: ", updatedTodoText);
+  var tempTodoList = todoList.map(iterator =>
+  {
+    if(editingFlag == iterator.id)
+    {
+      iterator.todo = updatedTodoText
+      return iterator
+    }
+    else
+    {
+      return iterator
+    }
+
+
+  })
+                                  
+    setTodoList(tempTodoList)
+    setEditingFlag(-1)
+  
+}
+
   return (
     <div>
       <h1>Todo Applicatiion</h1>
@@ -97,19 +129,29 @@ const completedTodo =(id) =>
            {
             //  console.log("iterator", iterator);
              return <li key={iterator.id}>
-              { iterator.completed == true ?
-              <>
-             <input type='checkbox' onChange={()=>completedTodo(iterator.id)} checked/>
-             <s>{iterator.todo}</s>
-             </> :
-             <>
-             <input type='checkbox' onChange={()=>completedTodo(iterator.id)}/>
-             {iterator.todo}
-             </>
+                      {iterator.completed == true ?
+                      <>
+                        <input type='checkbox' onChange={()=>completedTodo(iterator.id)} checked/>
+                        <s>{iterator.todo}</s>
+                      </> :
+                      <>
+                        {
+                          editingFlag === iterator.id ?
+                        <>
+                          <input type='checkbox' onChange={()=>completedTodo(iterator.id)}/>
+                          <input type='text' defaultValue={iterator.todo}/>
+                          <button onClick={()=>deleteTodo(iterator.id)}>Delete</button>
+                          <button onClick={saveEditedTodo}>Save</button>
+                        </> :
+                        <>
+                          <input type='checkbox' onChange={()=>completedTodo(iterator.id)}/>
+                          {iterator.todo}
+                          <button onClick={()=>deleteTodo(iterator.id)}>Delete</button>
+                          <button onClick={()=>editTodo(iterator.id)}>Edit</button>
+                        </>}
+              </>
               }
-             
-              <button onClick={()=>deleteTodo(iterator.id)}>Delete</button>
-              </li>
+             </li>
            })
            }
         </ul>
