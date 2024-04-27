@@ -1,10 +1,17 @@
 import logo from './logo.svg';
 import './App.css';
 import { useState } from 'react';
+
+
 var count = 0
+const COMPLETED = "COMPLETED"
+const INCOMPLETED = "INCOMPLETED"
+const ALL = "ALL"
+
 function App() 
 {
   const [editingFlag, setEditingFlag] = useState(-1)
+  const [filter, setFilter] = useState(INCOMPLETED)
   const [todoList, setTodoList] = useState([
     {
     id: count++,
@@ -14,7 +21,7 @@ function App()
     {
       id: count++,
       todo: "buy groceries",
-      completed: false
+      completed: true
       },
       {
         id: count++,
@@ -24,7 +31,7 @@ function App()
         {
           id: count++,
           todo: " complete poject",
-          completed: false
+          completed: true
           }
     
   ])
@@ -113,11 +120,36 @@ const editTodo = (id) =>
     setEditingFlag(-1)
   
 }
+ const filterTodo = (action) =>
+{
+  console.log("filterTodo: ", action);
+  switch (action)
+  {
+    case INCOMPLETED:
+      setFilter(INCOMPLETED)
+      break;
+    case COMPLETED:
+      setFilter(COMPLETED)
+      break;
+    case ALL:
+      setFilter(ALL)
+      break;
+    default:
+      break;    
+  }
+}
 
   return (
     <div>
       <h1>Todo Applicatiion</h1>
       <h4>(By Muskan Hardiya)</h4>
+
+
+      <div>
+        <label onClick={()=>filterTodo(INCOMPLETED)}>Incomplete</label>&nbsp;&nbsp;&nbsp;&nbsp; |&nbsp;&nbsp;&nbsp;&nbsp;
+        <label onClick={()=>filterTodo(COMPLETED)}>complete</label>&nbsp;&nbsp;&nbsp;&nbsp; |&nbsp;&nbsp;&nbsp;&nbsp;
+        <label onClick={()=>filterTodo(ALL)}>ALL</label>
+      </div>
 
       <input type="text" id='input' placeholder='Enter todo here'/>
       <button onClick={addTodo}>Add Todo</button>
@@ -127,8 +159,14 @@ const editTodo = (id) =>
           {
           todoList.map(iterator =>
            {
-            //  console.log("iterator", iterator);
-             return <li key={iterator.id}>
+
+            switch(filter)
+            {
+              case INCOMPLETED:
+                {
+                  if(!iterator.completed)
+                  {
+                    return <li key={iterator.id}>
                       {iterator.completed == true ?
                       <>
                         <input type='checkbox' onChange={()=>completedTodo(iterator.id)} checked/>
@@ -139,7 +177,7 @@ const editTodo = (id) =>
                           editingFlag === iterator.id ?
                         <>
                           <input type='checkbox' onChange={()=>completedTodo(iterator.id)}/>
-                          <input type='text' defaultValue={iterator.todo}/>
+                          <input type='text' id="editingTodo" defaultValue={iterator.todo}/>
                           <button onClick={()=>deleteTodo(iterator.id)}>Delete</button>
                           <button onClick={saveEditedTodo}>Save</button>
                         </> :
@@ -149,9 +187,74 @@ const editTodo = (id) =>
                           <button onClick={()=>deleteTodo(iterator.id)}>Delete</button>
                           <button onClick={()=>editTodo(iterator.id)}>Edit</button>
                         </>}
-              </>
-              }
-             </li>
+                     </>
+                      }
+                        </li>
+                  }
+                  break;
+                }
+              case COMPLETED:
+                {
+                  if(iterator.completed)
+                  {
+                    return <li key={iterator.id}>
+                      {iterator.completed == true ?
+                      <>
+                        <input type='checkbox' onChange={()=>completedTodo(iterator.id)} checked/>
+                        <s>{iterator.todo}</s>
+                      </> :
+                      <>
+                        {
+                          editingFlag === iterator.id ?
+                        <>
+                          <input type='checkbox' onChange={()=>completedTodo(iterator.id)}/>
+                          <input type='text' id="editingTodo" defaultValue={iterator.todo}/>
+                          <button onClick={()=>deleteTodo(iterator.id)}>Delete</button>
+                          <button onClick={saveEditedTodo}>Save</button>
+                        </> :
+                        <>
+                          <input type='checkbox' onChange={()=>completedTodo(iterator.id)}/>
+                          {iterator.todo}
+                          <button onClick={()=>deleteTodo(iterator.id)}>Delete</button>
+                          <button onClick={()=>editTodo(iterator.id)}>Edit</button>
+                        </>}
+                     </>
+                      }
+                        </li>
+                  }
+                }
+              case ALL:
+                {
+                  return <li key={iterator.id}>
+                      {iterator.completed == true ?
+                      <>
+                        <input type='checkbox' onChange={()=>completedTodo(iterator.id)} checked/>
+                        <s>{iterator.todo}</s>
+                      </> :
+                      <>
+                        {
+                          editingFlag === iterator.id ?
+                        <>
+                          <input type='checkbox' onChange={()=>completedTodo(iterator.id)}/>
+                          <input type='text' id="editingTodo" defaultValue={iterator.todo}/>
+                          <button onClick={()=>deleteTodo(iterator.id)}>Delete</button>
+                          <button onClick={saveEditedTodo}>Save</button>
+                        </> :
+                        <>
+                          <input type='checkbox' onChange={()=>completedTodo(iterator.id)}/>
+                          {iterator.todo}
+                          <button onClick={()=>deleteTodo(iterator.id)}>Delete</button>
+                          <button onClick={()=>editTodo(iterator.id)}>Edit</button>
+                        </>}
+                     </>
+                      }
+                        </li>
+                  break;
+                }
+              default:  
+            }
+            //  console.log("iterator", iterator);
+             
            })
            }
         </ul>
