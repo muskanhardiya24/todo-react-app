@@ -4,6 +4,8 @@ import { useState } from 'react';
 import TodoListItem from './TodoListItem';
 import MyHeader from './MyHeader';
 // import MyHeader from '../MyHeader';
+import { Button, Modal } from 'react-bootstrap';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 
 var count = 0
@@ -16,6 +18,7 @@ function App()
 {
   const [editingFlag, setEditingFlag] = useState(-1)
   const [filter, setFilter] = useState(INCOMPLETED)
+  const [modalShow, setModalShow] = useState(false)
   const [todoList, setTodoList] = useState([
     {
     id: count++,
@@ -124,6 +127,40 @@ const editTodo = (id) =>
     setEditingFlag(-1)
   
 }
+
+const setFilterUI = () =>
+  {
+    switch(filter)
+       {
+      case INCOMPLETED:
+        return <div className='filterContainer'>
+
+        <label className='filter-label-selected' onClick={()=>filterTodo(INCOMPLETED)}>Incomplete</label>&nbsp;&nbsp;&nbsp;&nbsp; |&nbsp;&nbsp;&nbsp;&nbsp;
+        <label onClick={()=>filterTodo(COMPLETED)}>complete</label>&nbsp;&nbsp;&nbsp;&nbsp; |&nbsp;&nbsp;&nbsp;&nbsp;
+        <label onClick={()=>filterTodo(ALL)}>ALL</label>
+      </div>
+        break;
+      case COMPLETED:
+        return <div className='filterContainer'>
+
+        <label onClick={()=>filterTodo(INCOMPLETED)}>Incomplete</label>&nbsp;&nbsp;&nbsp;&nbsp; |&nbsp;&nbsp;&nbsp;&nbsp;
+        <label className='filter-label-selected' onClick={()=>filterTodo(COMPLETED)}>complete</label>&nbsp;&nbsp;&nbsp;&nbsp; |&nbsp;&nbsp;&nbsp;&nbsp;
+        <label onClick={()=>filterTodo(ALL)}>ALL</label>
+      </div>
+        break;
+      case ALL:
+        return <div className='filterContainer'>
+
+        <label onClick={()=>filterTodo(INCOMPLETED)}>Incomplete</label>&nbsp;&nbsp;&nbsp;&nbsp; |&nbsp;&nbsp;&nbsp;&nbsp;
+        <label onClick={()=>filterTodo(COMPLETED)}>complete</label>&nbsp;&nbsp;&nbsp;&nbsp; |&nbsp;&nbsp;&nbsp;&nbsp;
+        <label className='filter-label-selected' onClick={()=>filterTodo(ALL)}>ALL</label>
+      </div>
+        break;
+        default:
+          break;
+       }
+  }
+
  const filterTodo = (action) =>
 {
   console.log("filterTodo: ", action);
@@ -148,14 +185,20 @@ const editTodo = (id) =>
     <div>
      <MyHeader/>
       <h4 className='subHeading'>(By Muskan Hardiya)</h4>
+      {setFilterUI()}
 
+      <>
+              <Button variant="primary" onClick={() => setModalShow(true)}>
+                Launch vertically centered modal
+              </Button>
 
-      <div className='filterContainer'>
-        <label onClick={()=>filterTodo(INCOMPLETED)}>Incomplete</label>&nbsp;&nbsp;&nbsp;&nbsp; |&nbsp;&nbsp;&nbsp;&nbsp;
-        <label onClick={()=>filterTodo(COMPLETED)}>complete</label>&nbsp;&nbsp;&nbsp;&nbsp; |&nbsp;&nbsp;&nbsp;&nbsp;
-        <label onClick={()=>filterTodo(ALL)}>ALL</label>
-      </div>
+              <MyVerticallyCenteredModal
+                show={modalShow}
+                onHide={() => setModalShow(false)}
+              />
+            </>
 
+      
       <input type="text" id='input' placeholder='Enter todo here'/>
       <button onClick={addTodo}>Add Todo</button>
 
@@ -232,5 +275,41 @@ const editTodo = (id) =>
   );
 }
 
+function MyVerticallyCenteredModal(props) {
+  return (
+    <Modal
+      {...props}
+      size="lg"
+      aria-labelledby="contained-modal-title-vcenter"
+      centered
+    >
+      <Modal.Header closeButton>
+        <Modal.Title id="contained-modal-title-vcenter">
+          Add New To-Do
+        </Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        {/* <h4>Centered Modal</h4>
+        <p>
+          Cras mattis consectetur purus sit amet fermentum. Cras justo odio,
+          dapibus ac facilisis in, egestas eget quam. Morbi leo risus, porta ac
+          consectetur ac, vestibulum at eros.
+        </p> */}
+         <textarea rows={2} cols={50} placeholder='Add To-Do here'/>
+      </Modal.Body>
+      <Modal.Footer>
+        <Button onClick={props.onHide}>Add</Button>
+        <Button onClick={props.onHide}>Close</Button>
+      </Modal.Footer>
+    </Modal>
+  );
+}
+
+
+ 
+  
+
 
 export default App;
+
+
